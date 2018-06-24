@@ -20,10 +20,19 @@ function parseXml(xml: Document): Promise<Bookmark[]> {
   let r = [];
   for (let i = 0; i < bookmarks.length; i++) {
     const e = bookmarks.item(i);
-    const title = e.getElementsByTagName('title').item(0).textContent;
     const url = e.getElementsByTagName('url').item(0).textContent;
-    if (!title || !url) {
+    if (!url) {
       return Promise.reject(`Invalid XML structure: ${e.toString()}`);
+    }
+    const titleNodes = e.getElementsByTagName('title');
+    let title = url;
+    if (titleNodes.length > 0 && titleNodes.item(0)) {
+      const maybeTitle = titleNodes.item(0).textContent;
+      if (!maybeTitle) {
+        title = url;
+      } else {
+        title = maybeTitle;
+      }
     }
     const labelNodes = e.getElementsByTagName('label');
     let labels = [];
