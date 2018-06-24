@@ -1,31 +1,42 @@
 <template>
   <div>
-    <p v-if="loggedIn">{{ text }}</p>
+    <ul v-if="loggedIn">
+      <li v-for="b in bookmarks">
+        <a v-bind:href="b.url" @click="openUrl(b.url)">
+          {{ b.title }}
+        </a>: [{{ b.labels.join(',') }}]
+      </li>
+    </ul>
     <p v-else>
-      <a href="javascript:void(0)" @click="openLoginLink">Login</a>
+      <a href="javascript:void(0)" @click="openUrl('http://www.google.com/bookmarks')">
+        Login
+      </a>
     </p>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import {
+  Bookmark,
+  findBookmarks
+} from './api';
 
 export default Vue.extend({
   name: 'App',
 
   data() {
     return {
-      text: '',
+      bookmarks: <Bookmark[]>[],
       loggedIn: false
     };
   },
 
   beforeMount() {
-    fetch('https://www.google.com/bookmarks/?output=xml', {credentials: 'include'})
-      .then(r => r.text())
-      .then(text => {
+    findBookmarks()
+      .then(bookmarks => {
         this.loggedIn = true;
-        this.text = text;
+        this.bookmarks = bookmarks;
       })
       .catch(err => {
         this.loggedIn = false;
@@ -34,8 +45,8 @@ export default Vue.extend({
   },
 
   methods: {
-    openLoginLink() {
-      chrome.tabs.create({url: 'http://www.google.com/bookmarks'});
+    openUrl(url: string): void {
+      chrome.tabs.create({url});
     }
   }
 });
