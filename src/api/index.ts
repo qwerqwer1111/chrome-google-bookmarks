@@ -17,7 +17,7 @@ function parseXml(xml: Document): Promise<Bookmark[]> {
     return Promise.reject(`bookmarks does not exist: ${xml.toString()}`);
   }
   const bookmarks = xml.getElementsByTagName('bookmark');
-  let r = [];
+  const r = [];
   for (let i = 0; i < bookmarks.length; i++) {
     const e = bookmarks.item(i);
     const url = e.getElementsByTagName('url').item(0).textContent;
@@ -27,15 +27,10 @@ function parseXml(xml: Document): Promise<Bookmark[]> {
     const titleNodes = e.getElementsByTagName('title');
     let title = url;
     if (titleNodes.length > 0 && titleNodes.item(0)) {
-      const maybeTitle = titleNodes.item(0).textContent;
-      if (!maybeTitle) {
-        title = url;
-      } else {
-        title = maybeTitle;
-      }
+      title = titleNodes.item(0).textContent || url;
     }
     const labelNodes = e.getElementsByTagName('label');
-    let labels = [];
+    const labels = [];
     for (let j = 0; j < labelNodes.length; j++) {
       const l = labelNodes.item(j).textContent;
       if (l) {
