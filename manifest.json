@@ -1,0 +1,13 @@
+{
+  "name": "chrome-google-bookmarks",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "chrome-google-bookmarks",
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "tabs",
+    "https://www.google.com/bookmarks/"
+  ]
+}
