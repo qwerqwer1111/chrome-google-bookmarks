@@ -1,3 +1,5 @@
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+
 const production = process.env.NODE_ENV === 'production';
 
 module.exports = {
@@ -8,19 +10,39 @@ module.exports = {
     filename: 'bundle.js'
   },
 
+  plugins: [
+    new VueLoaderPlugin()
+  ],
+
   devtool: production ? false : 'inline-source-map',
 
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: {
+          loader: 'ts-loader',
+          options: {
+            appendTsSuffixTo: [/\.vue$/]
+          }
+        },
         exclude: /node_modules/
+      },
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
+      },
+      {
+        test: /\.css$/,
+        use: 'css-loader'
       }
     ]
   },
 
   resolve: {
-    extensions: ['.js', '.ts', '.tsx']
+    extensions: ['.js', '.ts', '.tsx'],
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js'
+    }
   }
 };
