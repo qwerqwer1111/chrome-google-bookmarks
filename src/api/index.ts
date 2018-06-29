@@ -1,16 +1,6 @@
+import {Bookmark} from '../model';
+
 const parser = new DOMParser();
-
-export class Bookmark {
-  title: string;
-  url: string;
-  labels: string[];
-
-  constructor(title: string, url: string, labels: string[]) {
-    this.title = title;
-    this.url = url;
-    this.labels = labels;
-  }
-}
 
 function parseXml(xml: Document): Promise<Bookmark[]> {
   if (!xml.getElementsByTagName('bookmarks')) {

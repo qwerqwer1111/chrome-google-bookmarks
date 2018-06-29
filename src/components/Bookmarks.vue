@@ -1,79 +1,81 @@
 <template>
   <div>
-    <div v-if="loggedIn">
-      <p><a href="#" @click="selectLabel('')">Clear</a></p>
+    <div v-if="loading">
+      <p>Loading...</p>
+    </div>
+    <div v-else-if="loggedIn">
+      [<a href="#" @click="selectLabel('')">Clear</a>] |
       <span v-for="(label, index) in labels">
-        <a href="#" @click="selectLabel(label)">
-          {{ label }}
-        </a>
+        <a href="#" @click="selectLabel(label)">{{ label }}</a>
         <span v-if="index !== labels.length - 1"> / </span>
       </span>
+      <ul>
+        <li v-for="b in bookmarks">
+          <a v-bind:href="b.url" @click="openUrl(b.url, false)">
+            {{ b.title }}
+          </a>: [{{ b.labels.join(',') }}]
+        </li>
+      </ul>
     </div>
-    <ul v-if="loggedIn">
-      <li v-for="b in bookmarks">
-        <a v-bind:href="b.url" @click="openUrl(b.url, false)">
-          {{ b.title }}
-        </a>: [{{ b.labels.join(',') }}]
-      </li>
-    </ul>
-    <p v-else>
-      <a href="http://www.google.com/bookmarks"
-         @click="openUrl('http://www.google.com/bookmarks', true)">
-        Login
-      </a>
-    </p>
+    <div v-else>
+      <p>
+        <a href="http://www.google.com/bookmarks"
+           @click="openUrl('http://www.google.com/bookmarks', true)">
+          Login
+        </a>
+      </p>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import {Bookmark} from '../model';
+
 import {
-  Bookmark,
-  findBookmarks
-} from '../api';
+  dispatchFetchBookmarks,
+  dispatchSelectLabel,
+  readLabels,
+  readLoggedIn,
+  readSelectedBookmarks,
+  SelectLabelActionPayload
+} from '../store';
 
 export default Vue.extend({
   name: 'Bookmarks',
 
   data() {
     return {
-      label: '',
-      allBookmarks: <Bookmark[]>[],
-      loggedIn: false
+      loading: true
     };
   },
 
   computed: {
-    labels: function (): string[] {
-      const s = new Set<string>();
-      this.allBookmarks.forEach(b => b.labels.forEach(l => s.add(l)));
-      const r = <string[]>[];
-      s.forEach(l => r.push(l));
-      return r.sort();
+    labels(): string[] {
+      return readLabels(this.$store);
     },
 
-    bookmarks: function (): Bookmark[] {
-      if (this.label === '') {
-        return this.allBookmarks;
-      }
-      return this.allBookmarks
-        .filter(b => b.labels.includes(this.label));
+    bookmarks(): Bookmark[] {
+      return readSelectedBookmarks(this.$store);
+    },
+
+    loggedIn(): boolean {
+      return readLoggedIn(this.$store);
     }
   },
 
   beforeMount() {
-    findBookmarks().then(bookmarks => {
-      this.loggedIn = true;
-      this.allBookmarks = bookmarks;
+    dispatchFetchBookmarks(this.$store).then(() => {
+      this.loading = false;
     }).catch(err => {
-      this.loggedIn = false;
+      this.loading = false;
       console.error(err);
     });
   },
 
   methods: {
     selectLabel(label: string) {
-      this.label = label;
+      dispatchSelectLabel(this.$store, <SelectLabelActionPayload>{label}).then();
     },
 
     openUrl(url: string, active: boolean) {
