@@ -81,6 +81,7 @@ export default Vue.extend({
 
   methods: {
     fetchBookmarks() {
+      this.loading = true;
       dispatchFetchBookmarks(this.$store).then(() => {
         this.loading = false;
       }).catch(err => {
