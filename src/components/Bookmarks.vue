@@ -76,7 +76,12 @@ export default Vue.extend({
   },
 
   beforeMount() {
-    this.fetchBookmarks();
+    dispatchFetchBookmarks(this.$store).then(() => {
+      this.loading = false;
+    }).catch(err => {
+      this.loading = false;
+      console.error(err);
+    });
   },
 
   methods: {
