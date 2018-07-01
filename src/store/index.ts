@@ -28,7 +28,7 @@ function loadSelectedLabelFromLocalStorage(): string {
 const state = <State>{
   bookmarks: loadBookmarksFromLocalStorage(),
   selectedLabel: loadSelectedLabelFromLocalStorage(),
-  loggedIn: false
+  loggedIn: true
 };
 
 interface SetBookmarksPayload {
