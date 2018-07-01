@@ -6,7 +6,10 @@
     <div v-else-if="loggedIn">
       [<a href="#" @click="selectLabel('')">Clear</a>] |
       <span v-for="(label, index) in labels">
-        <a href="#" @click="selectLabel(label)">{{ label }}</a>
+        <b v-if="label === selectedLabel">
+          <a href="#" @click="selectLabel(label)">{{ label }}</a>
+        </b>
+        <a v-else href="#" @click="selectLabel(label)">{{ label }}</a>
         <span v-if="index !== labels.length - 1"> / </span>
       </span>
       <ul>
@@ -38,6 +41,7 @@ import {
   readLabels,
   readLoggedIn,
   readSelectedBookmarks,
+  readSelectedLabel,
   SelectLabelActionPayload
 } from '../store';
 
@@ -57,6 +61,10 @@ export default Vue.extend({
 
     bookmarks(): Bookmark[] {
       return readSelectedBookmarks(this.$store);
+    },
+
+    selectedLabel(): string {
+      return readSelectedLabel(this.$store);
     },
 
     loggedIn(): boolean {

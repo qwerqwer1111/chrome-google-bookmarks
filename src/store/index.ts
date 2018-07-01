@@ -15,9 +15,19 @@ interface State {
   loggedIn: boolean;
 }
 
+function loadBookmarksFromLocalStorage(): Bookmark[] {
+  const s = localStorage.getItem('bookmarks');
+  return s === null ? [] : JSON.parse(s);
+}
+
+function loadSelectedLabelFromLocalStorage(): string {
+  const s = localStorage.getItem('selectedLabel');
+  return s === null ? '' : s;
+}
+
 const state = <State>{
-  bookmarks: [],
-  selectedLabel: '',
+  bookmarks: loadBookmarksFromLocalStorage(),
+  selectedLabel: loadSelectedLabelFromLocalStorage(),
   loggedIn: false
 };
 
@@ -56,17 +66,21 @@ const actions = {
     return findBookmarks().then(bookmarks => {
       context.commit('setBookmarks', <SetBookmarksPayload>{bookmarks});
       context.commit('setLoggedIn', <SetLoggedInPayload>{loggedIn: true});
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
       return Promise.resolve();
     }).catch(err => {
       console.error(err);
       context.commit('setBookmarks', <SetBookmarksPayload>{bookmarks: []});
       context.commit('setLoggedIn', <SetLoggedInPayload>{loggedIn: false});
+      localStorage.setItem('bookmarks', JSON.stringify([]));
+      localStorage.setItem('selectedLabel', '');
       return Promise.reject(err);
     });
   },
 
   selectLabel(context: ActionContext<State, State>, {label}: SelectLabelActionPayload) {
     context.commit('setSelectedLabel', <SetSelectedLabelPayload>{selectedLabel: label});
+    localStorage.setItem('selectedLabel', label);
   }
 };
 
@@ -86,6 +100,10 @@ const getters = {
     return state.bookmarks.filter(b => b.labels.includes(state.selectedLabel));
   },
 
+  selectedLabel(state: State): string {
+    return state.selectedLabel;
+  },
+
   loggedIn(state: State): boolean {
     return state.loggedIn;
   }
@@ -98,6 +116,7 @@ export const dispatchSelectLabel = dispatch(actions.selectLabel);
 
 export const readLabels = read(getters.labels);
 export const readSelectedBookmarks = read(getters.selectedBookmarks);
+export const readSelectedLabel = read(getters.selectedLabel);
 export const readLoggedIn = read(getters.loggedIn);
 
 export default new Vuex.Store({
