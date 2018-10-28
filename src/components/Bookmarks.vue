@@ -7,18 +7,23 @@
           @click.prevent="fetchBookmarks()">
         <i class="icon icon-refresh"></i>
       </button>
-      <a href="#" @click.prevent="selectLabel('')" class="label label-rounded label-primary">
-        Clear
-      </a>
       <div class="divider"></div>
-      <a
-          v-for="label in labels"
-          href="#"
-          @click.prevent="selectLabel(label)"
-          class="label label-rounded tag-label"
-          v-bind:class="{ 'label-primary': label === selectedLabel }">
-        {{ label }}
-      </a>
+      <div class="tag-container">
+        <a
+            href="#"
+            @click.prevent="selectLabel('')"
+            class="label label-rounded label-primary tag-label">
+          All
+        </a>
+        <a
+            v-for="label in labels"
+            href="#"
+            @click.prevent="selectLabel(label)"
+            class="label label-rounded tag-label"
+            v-bind:class="{ 'label-secondary': label === selectedLabel }">
+          {{ label }}
+        </a>
+      </div>
       <div class="divider"></div>
       <ul>
         <li v-for="b in bookmarks" class="bookmark-list">
@@ -115,36 +120,36 @@ export default Vue.extend({
     }
   },
 
-  beforeMount() {
-    dispatchFetchBookmarks(this.$store).then(() => {
-      this.loading = false;
-    }).catch(err => {
-      this.loading = false;
-      console.error(err);
-    });
+  async beforeMount() {
+    try {
+      await dispatchFetchBookmarks(this.$store);
+    } catch (e) {
+      console.error(e);
+    }
+    this.loading = false;
   },
 
   methods: {
-    fetchBookmarks() {
+    async fetchBookmarks() {
       this.loading = true;
-      dispatchFetchBookmarks(this.$store).then(() => {
-        this.loading = false;
-      }).catch(err => {
-        this.loading = false;
-        console.error(err);
-      });
+      try {
+        await dispatchFetchBookmarks(this.$store);
+      } catch (e) {
+        console.error(e);
+      }
+      this.loading = false;
     },
 
-    selectLabel(label: string) {
-      dispatchSelectLabel(this.$store, <SelectLabelActionPayload>{ label }).then();
+    async selectLabel(label: string) {
+      await dispatchSelectLabel(this.$store, <SelectLabelActionPayload>{ label });
+    },
+
+    async selectCurrentPage(page: number) {
+      await dispatchSetCurrentPage(this.$store, <SetCurrentPageActionPayload>{ page });
     },
 
     openUrl(url: string, active: boolean) {
       chrome.tabs.create({ url, active });
-    },
-
-    selectCurrentPage(page: number) {
-      dispatchSetCurrentPage(this.$store, <SetCurrentPageActionPayload>{ page }).then();
     }
   }
 });
@@ -157,5 +162,13 @@ export default Vue.extend({
 
   .label.tag-label {
     margin: .1rem;
+  }
+
+  div.tag-container {
+    letter-spacing: -.4em;
+  }
+
+  div.tag-container > .label.tag-label {
+    letter-spacing: normal;
   }
 </style>

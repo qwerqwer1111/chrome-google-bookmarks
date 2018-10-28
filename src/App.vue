@@ -17,7 +17,6 @@ export default Vue.extend({
   @import "~spectre.css/dist/spectre-icons.min.css";
 
   .container.grid-xxs {
-    max-width: 380px;
     font-size: 14px;
     padding-top: .4rem;
   }
