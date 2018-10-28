@@ -31,8 +31,21 @@
         <li
             class="page-item"
             v-for="i in totalPage"
+            v-if="i === 1
+              || i === totalPage
+              || (currentPage - 2 <= i - 1 && i - 1 <= currentPage + 2)"
             v-bind:class="{ 'active': i - 1 === currentPage }">
-          <a href="#" @click.prevent="selectCurrentPage(i - 1)">{{ i }}</a>
+          <template
+              v-if="currentPage - 1 <= i - 1 && i - 1 <= currentPage + 1">
+            <a href="#" @click.prevent="selectCurrentPage(i - 1)">{{ i }}</a>
+          </template>
+          <template v-else-if="i === 1">
+            <a href="#" @click.prevent="selectCurrentPage(i - 1)">{{ i }}</a>
+          </template>
+          <template v-else-if="i === totalPage">
+            <a href="#" @click.prevent="selectCurrentPage(i - 1)">{{ i }}</a>
+          </template>
+          <template v-else><span>...</span></template>
         </li>
       </ul>
     </template>
