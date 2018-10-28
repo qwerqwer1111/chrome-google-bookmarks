@@ -6,6 +6,7 @@ import Vuex, {
 import { getStoreAccessors } from 'vuex-typescript';
 import { findBookmarks } from '../api';
 import { Bookmark } from '../model';
+import { PAGE_SIZE } from '../constants';
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ interface State {
   bookmarks: Bookmark[];
   selectedLabel: string;
   loggedIn: boolean;
+  currentPage: number;
 }
 
 function loadBookmarksFromLocalStorage(): Bookmark[] {
@@ -25,10 +27,16 @@ function loadSelectedLabelFromLocalStorage(): string {
   return s === null ? '' : s;
 }
 
+function loadCurrentPageFromLocalStorage(): number {
+  const s = localStorage.getItem('currentPage');
+  return s === null ? 0 : parseInt(s);
+}
+
 const state = <State>{
   bookmarks: loadBookmarksFromLocalStorage(),
   selectedLabel: loadSelectedLabelFromLocalStorage(),
-  loggedIn: true
+  loggedIn: true,
+  currentPage: loadCurrentPageFromLocalStorage()
 };
 
 interface SetBookmarksPayload {
@@ -43,6 +51,10 @@ interface SetSelectedLabelPayload {
   selectedLabel: string;
 }
 
+interface SetCurrentPagePayload {
+  currentPage: number;
+}
+
 const mutations = <MutationTree<State>>{
   setBookmarks(state: State, { bookmarks }: SetBookmarksPayload) {
     state.bookmarks = bookmarks;
@@ -54,11 +66,19 @@ const mutations = <MutationTree<State>>{
 
   setSelectedLabel(state: State, { selectedLabel }: SetSelectedLabelPayload) {
     state.selectedLabel = selectedLabel;
+  },
+
+  setCurrentPage(state: State, { currentPage }: SetCurrentPagePayload) {
+    state.currentPage = currentPage;
   }
 };
 
 export interface SelectLabelActionPayload {
   label: string;
+}
+
+export interface SetCurrentPageActionPayload {
+  page: number;
 }
 
 const actions = {
@@ -74,15 +94,30 @@ const actions = {
       context.commit('setLoggedIn', <SetLoggedInPayload>{ loggedIn: false });
       localStorage.setItem('bookmarks', JSON.stringify([]));
       localStorage.setItem('selectedLabel', '');
+      localStorage.setItem('currentPage', '0');
       return Promise.reject(err);
     });
   },
 
   selectLabel(context: ActionContext<State, State>, { label }: SelectLabelActionPayload) {
     context.commit('setSelectedLabel', <SetSelectedLabelPayload>{ selectedLabel: label });
+    context.commit('setCurrentPage', <SetCurrentPagePayload>{ currentPage: 0 });
     localStorage.setItem('selectedLabel', label);
+    localStorage.setItem('currentPage', '0');
+  },
+
+  setCurrentPage(context: ActionContext<State, State>, { page }: SetCurrentPageActionPayload) {
+    context.commit('setCurrentPage', <SetCurrentPagePayload>{ currentPage: page });
+    localStorage.setItem('currentPage', '' + page);
   }
 };
+
+function allBookmarksInSelectedLabel(state: State): Bookmark[] {
+  if (state.selectedLabel === '') {
+    return state.bookmarks;
+  }
+  return state.bookmarks.filter(b => b.labels.includes(state.selectedLabel));
+}
 
 const getters = {
   labels(state: State): string[] {
@@ -94,10 +129,8 @@ const getters = {
   },
 
   selectedBookmarks(state: State): Bookmark[] {
-    if (state.selectedLabel === '') {
-      return state.bookmarks;
-    }
-    return state.bookmarks.filter(b => b.labels.includes(state.selectedLabel));
+    return allBookmarksInSelectedLabel(state)
+      .slice(state.currentPage * PAGE_SIZE, (state.currentPage + 1) * PAGE_SIZE);
   },
 
   selectedLabel(state: State): string {
@@ -106,6 +139,14 @@ const getters = {
 
   loggedIn(state: State): boolean {
     return state.loggedIn;
+  },
+
+  currentPage(state: State): number {
+    return state.currentPage;
+  },
+
+  totalPage(state: State): number {
+    return Math.ceil(allBookmarksInSelectedLabel(state).length / PAGE_SIZE);
   }
 };
 
@@ -113,11 +154,14 @@ const { dispatch, read } = getStoreAccessors<State, State>('');
 
 export const dispatchFetchBookmarks = dispatch(actions.fetchBookmarks);
 export const dispatchSelectLabel = dispatch(actions.selectLabel);
+export const dispatchSetCurrentPage = dispatch(actions.setCurrentPage);
 
 export const readLabels = read(getters.labels);
 export const readSelectedBookmarks = read(getters.selectedBookmarks);
 export const readSelectedLabel = read(getters.selectedLabel);
 export const readLoggedIn = read(getters.loggedIn);
+export const readCurrentPage = read(getters.currentPage);
+export const readTotalPage = read(getters.totalPage);
 
 export default new Vuex.Store({
   state,

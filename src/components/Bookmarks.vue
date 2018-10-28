@@ -27,6 +27,14 @@
           <span v-for="label in b.labels" class="label label-rounded tag-label">{{ label }}</span>
         </li>
       </ul>
+      <ul class="pagination">
+        <li
+            class="page-item"
+            v-for="i in totalPage"
+            v-bind:class="{ 'active': i - 1 === currentPage }">
+          <a href="#" @click.prevent="selectCurrentPage(i - 1)">{{ i }}</a>
+        </li>
+      </ul>
     </template>
     <template v-else>
       <a
@@ -45,11 +53,15 @@ import { Bookmark } from '../model';
 import {
   dispatchFetchBookmarks,
   dispatchSelectLabel,
+  dispatchSetCurrentPage,
+  readCurrentPage,
   readLabels,
   readLoggedIn,
   readSelectedBookmarks,
   readSelectedLabel,
-  SelectLabelActionPayload
+  readTotalPage,
+  SelectLabelActionPayload,
+  SetCurrentPageActionPayload
 } from '../store';
 
 export default Vue.extend({
@@ -76,6 +88,14 @@ export default Vue.extend({
 
     loggedIn(): boolean {
       return readLoggedIn(this.$store);
+    },
+
+    currentPage(): number {
+      return readCurrentPage(this.$store);
+    },
+
+    totalPage(): number {
+      return readTotalPage(this.$store);
     }
   },
 
@@ -105,6 +125,10 @@ export default Vue.extend({
 
     openUrl(url: string, active: boolean) {
       chrome.tabs.create({ url, active });
+    },
+
+    selectCurrentPage(page: number) {
+      dispatchSetCurrentPage(this.$store, <SetCurrentPageActionPayload>{ page }).then();
     }
   }
 });
