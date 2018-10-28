@@ -1,42 +1,43 @@
 <template>
   <div>
-    <div>
-      <p v-if="loading">Loading...</p>
-      <p v-else-if="loggedIn">
-        <a href="#" @click.prevent="fetchBookmarks()">Reload</a>
-      </p>
-    </div>
-    <div v-if="loggedIn">
-      [<a href="#" @click.prevent="selectLabel('')">Clear</a>] |
-      <span v-for="(label, index) in labels">
-        <b v-if="label === selectedLabel">
-          <a href="#" @click.prevent="selectLabel(label)">{{ label }}</a>
-        </b>
-        <a v-else href="#" @click.prevent="selectLabel(label)">{{ label }}</a>
-        <span v-if="index !== labels.length - 1"> / </span>
+    <template v-if="loggedIn">
+      <button
+          class="btn btn-sm btn-link"
+          v-bind:class="{ 'loading': loading }"
+          @click.prevent="fetchBookmarks()">
+        <i class="icon icon-refresh"></i>
+      </button>
+      <span class="label label-rounded">
+        <a href="#" @click.prevent="selectLabel('')">Clear</a>
       </span>
+      <div class="divider"></div>
+      <span
+          class="label label-rounded tag-label"
+          v-for="label in labels"
+          v-bind:class="{ 'text-bold': label === selectedLabel }">
+        <a href="#" @click.prevent="selectLabel(label)">{{ label }}</a>
+      </span>
+      <div class="divider"></div>
       <ul>
-        <li v-for="b in bookmarks">
-          <a v-bind:href="b.url" @click.prevent="openUrl(b.url, false)">
-            {{ b.title }}
-          </a>: [{{ b.labels.join(',') }}]
+        <li v-for="b in bookmarks" class="bookmark-list">
+          <a v-bind:href="b.url" @click.prevent="openUrl(b.url, false)">{{ b.title }}</a>
+          <span v-for="label in b.labels" class="label label-rounded tag-label">{{ label }}</span>
         </li>
       </ul>
-    </div>
-    <div v-else>
-      <p>
-        <a href="http://www.google.com/bookmarks"
-           @click.prevent="openUrl('http://www.google.com/bookmarks', true)">
-          Login
-        </a>
-      </p>
-    </div>
+    </template>
+    <template v-else>
+      <a
+          href="http://www.google.com/bookmarks"
+          @click.prevent="openUrl('http://www.google.com/bookmarks', true)">
+        Login
+      </a>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {Bookmark} from '../model';
+import { Bookmark } from '../model';
 
 import {
   dispatchFetchBookmarks,
@@ -96,12 +97,22 @@ export default Vue.extend({
     },
 
     selectLabel(label: string) {
-      dispatchSelectLabel(this.$store, <SelectLabelActionPayload>{label}).then();
+      dispatchSelectLabel(this.$store, <SelectLabelActionPayload>{ label }).then();
     },
 
     openUrl(url: string, active: boolean) {
-      chrome.tabs.create({url, active});
+      chrome.tabs.create({ url, active });
     }
   }
 });
 </script>
+
+<style scoped>
+  li.bookmark-list {
+    margin-top: 0;
+  }
+
+  span.tag-label {
+    margin: .1rem;
+  }
+</style>

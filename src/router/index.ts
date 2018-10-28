@@ -9,7 +9,7 @@ import Bookmarks from '../components/Bookmarks.vue';
 Vue.use(VueRouter.install);
 
 const routes = <RouteConfig[]>[
-  {path: '', component: Bookmarks}
+  { path: '', component: Bookmarks }
 ];
 
 export default new VueRouter(<RouterOptions>{

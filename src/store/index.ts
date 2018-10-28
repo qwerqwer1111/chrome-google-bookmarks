@@ -3,9 +3,9 @@ import Vuex, {
   ActionContext,
   MutationTree
 } from 'vuex';
-import {getStoreAccessors} from 'vuex-typescript';
-import {findBookmarks} from '../api';
-import {Bookmark} from '../model';
+import { getStoreAccessors } from 'vuex-typescript';
+import { findBookmarks } from '../api';
+import { Bookmark } from '../model';
 
 Vue.use(Vuex);
 
@@ -44,15 +44,15 @@ interface SetSelectedLabelPayload {
 }
 
 const mutations = <MutationTree<State>>{
-  setBookmarks(state: State, {bookmarks}: SetBookmarksPayload) {
+  setBookmarks(state: State, { bookmarks }: SetBookmarksPayload) {
     state.bookmarks = bookmarks;
   },
 
-  setLoggedIn(state: State, {loggedIn}: SetLoggedInPayload) {
+  setLoggedIn(state: State, { loggedIn }: SetLoggedInPayload) {
     state.loggedIn = loggedIn;
   },
 
-  setSelectedLabel(state: State, {selectedLabel}: SetSelectedLabelPayload) {
+  setSelectedLabel(state: State, { selectedLabel }: SetSelectedLabelPayload) {
     state.selectedLabel = selectedLabel;
   }
 };
@@ -64,22 +64,22 @@ export interface SelectLabelActionPayload {
 const actions = {
   async fetchBookmarks(context: ActionContext<State, State>): Promise<void> {
     return findBookmarks().then(bookmarks => {
-      context.commit('setBookmarks', <SetBookmarksPayload>{bookmarks});
-      context.commit('setLoggedIn', <SetLoggedInPayload>{loggedIn: true});
+      context.commit('setBookmarks', <SetBookmarksPayload>{ bookmarks });
+      context.commit('setLoggedIn', <SetLoggedInPayload>{ loggedIn: true });
       localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
       return Promise.resolve();
     }).catch(err => {
       console.error(err);
-      context.commit('setBookmarks', <SetBookmarksPayload>{bookmarks: []});
-      context.commit('setLoggedIn', <SetLoggedInPayload>{loggedIn: false});
+      context.commit('setBookmarks', <SetBookmarksPayload>{ bookmarks: [] });
+      context.commit('setLoggedIn', <SetLoggedInPayload>{ loggedIn: false });
       localStorage.setItem('bookmarks', JSON.stringify([]));
       localStorage.setItem('selectedLabel', '');
       return Promise.reject(err);
     });
   },
 
-  selectLabel(context: ActionContext<State, State>, {label}: SelectLabelActionPayload) {
-    context.commit('setSelectedLabel', <SetSelectedLabelPayload>{selectedLabel: label});
+  selectLabel(context: ActionContext<State, State>, { label }: SelectLabelActionPayload) {
+    context.commit('setSelectedLabel', <SetSelectedLabelPayload>{ selectedLabel: label });
     localStorage.setItem('selectedLabel', label);
   }
 };
@@ -109,7 +109,7 @@ const getters = {
   }
 };
 
-const {dispatch, read} = getStoreAccessors<State, State>('');
+const { dispatch, read } = getStoreAccessors<State, State>('');
 
 export const dispatchFetchBookmarks = dispatch(actions.fetchBookmarks);
 export const dispatchSelectLabel = dispatch(actions.selectLabel);

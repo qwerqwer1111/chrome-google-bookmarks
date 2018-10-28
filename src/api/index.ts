@@ -1,4 +1,4 @@
-import {Bookmark} from '../model';
+import { Bookmark } from '../model';
 
 const parser = new DOMParser();
 
@@ -33,7 +33,7 @@ function parseXml(xml: Document): Promise<Bookmark[]> {
 }
 
 export function findBookmarks(): Promise<Bookmark[]> {
-  return fetch('https://www.google.com/bookmarks/?output=xml', {credentials: 'include'})
+  return fetch('https://www.google.com/bookmarks/?output=xml', { credentials: 'include' })
     .then(r => r.text())
     .then(txt => parser.parseFromString(txt, 'text/xml'))
     .then(xml => parseXml(xml));
