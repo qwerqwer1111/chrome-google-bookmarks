@@ -7,24 +7,29 @@
           @click.prevent="fetchBookmarks()">
         <i class="icon icon-refresh"></i>
       </button>
-      <a href="#" @click.prevent="selectLabel('')">
-        <span class="label label-rounded label-primary">Clear</span>
+      <a href="#" @click.prevent="selectLabel('')" class="label label-rounded label-primary">
+        Clear
       </a>
       <div class="divider"></div>
-      <span v-for="label in labels">
-        <a href="#" @click.prevent="selectLabel(label)">
-          <span
-              class="label label-rounded tag-label"
-              v-bind:class="{ 'label-primary': label === selectedLabel }">
-            {{ label }}
-          </span>
-        </a>
-      </span>
+      <a
+          v-for="label in labels"
+          href="#"
+          @click.prevent="selectLabel(label)"
+          class="label label-rounded tag-label"
+          v-bind:class="{ 'label-primary': label === selectedLabel }">
+        {{ label }}
+      </a>
       <div class="divider"></div>
       <ul>
         <li v-for="b in bookmarks" class="bookmark-list">
           <a v-bind:href="b.url" @click.prevent="openUrl(b.url, false)">{{ b.title }}</a>
-          <span v-for="label in b.labels" class="label label-rounded tag-label">{{ label }}</span>
+          <a
+              v-for="label in b.labels"
+              href="#"
+              @click.prevent="selectLabel(label)"
+              class="label label-rounded tag-label">
+            {{ label }}
+          </a>
         </li>
       </ul>
       <ul class="pagination">
@@ -35,17 +40,15 @@
               || i === totalPage
               || (currentPage - 2 <= i - 1 && i - 1 <= currentPage + 2)"
             v-bind:class="{ 'active': i - 1 === currentPage }">
-          <template
-              v-if="currentPage - 1 <= i - 1 && i - 1 <= currentPage + 1">
-            <a href="#" @click.prevent="selectCurrentPage(i - 1)">{{ i }}</a>
-          </template>
-          <template v-else-if="i === 1">
-            <a href="#" @click.prevent="selectCurrentPage(i - 1)">{{ i }}</a>
-          </template>
-          <template v-else-if="i === totalPage">
-            <a href="#" @click.prevent="selectCurrentPage(i - 1)">{{ i }}</a>
-          </template>
-          <template v-else><span>...</span></template>
+          <a
+              v-if="i === 1
+                || i === totalPage
+                || (currentPage - 1 <= i - 1 && i - 1 <= currentPage + 1)"
+              href="#"
+              @click.prevent="selectCurrentPage(i - 1)">
+            {{ i }}
+          </a>
+          <span v-else>...</span>
         </li>
       </ul>
     </template>
@@ -152,7 +155,7 @@ export default Vue.extend({
     margin-top: 0;
   }
 
-  span.tag-label {
+  .label.tag-label {
     margin: .1rem;
   }
 </style>
