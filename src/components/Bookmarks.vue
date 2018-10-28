@@ -7,15 +7,18 @@
           @click.prevent="fetchBookmarks()">
         <i class="icon icon-refresh"></i>
       </button>
-      <span class="label label-rounded">
-        <a href="#" @click.prevent="selectLabel('')">Clear</a>
-      </span>
+      <a href="#" @click.prevent="selectLabel('')">
+        <span class="label label-rounded label-primary">Clear</span>
+      </a>
       <div class="divider"></div>
-      <span
-          class="label label-rounded tag-label"
-          v-for="label in labels"
-          v-bind:class="{ 'text-bold': label === selectedLabel }">
-        <a href="#" @click.prevent="selectLabel(label)">{{ label }}</a>
+      <span v-for="label in labels">
+        <a href="#" @click.prevent="selectLabel(label)">
+          <span
+              class="label label-rounded tag-label"
+              v-bind:class="{ 'label-primary': label === selectedLabel }">
+            {{ label }}
+          </span>
+        </a>
       </span>
       <div class="divider"></div>
       <ul>
