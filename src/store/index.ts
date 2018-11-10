@@ -6,9 +6,10 @@ import Vuex, {
 import { getStoreAccessors } from 'vuex-typescript';
 import { findBookmarks } from '../api';
 import { Bookmark } from '../model';
-import { PAGE_SIZE } from '../constants';
 
 Vue.use(Vuex);
+
+const PAGE_SIZE = 100;
 
 interface State {
   bookmarks: Bookmark[];

@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const production = process.env.NODE_ENV === 'production';
@@ -11,6 +12,11 @@ module.exports = {
   },
 
   plugins: [
+    new HtmlWebpackPlugin({
+      template: 'src/template/popup.html',
+      filename: 'popup.html',
+      minify: production ? { collapseWhitespace: true, minifyCSS: true } : false
+    }),
     new VueLoaderPlugin()
   ],
 
