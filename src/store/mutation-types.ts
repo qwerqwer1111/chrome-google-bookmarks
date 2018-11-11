@@ -1,0 +1,4 @@
+export const SET_BOOKMARKS = 'SET_BOOKMARKS';
+export const SET_LOGGED_IN = 'SET_LOGGED_IN';
+export const SET_SELECTED_LABEL = 'SET_SELECTED_LABEL';
+export const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE';

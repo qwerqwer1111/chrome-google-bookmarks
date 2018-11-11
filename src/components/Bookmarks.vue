@@ -70,7 +70,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Bookmark } from '../model';
-
 import {
   dispatchFetchBookmarks,
   dispatchSelectLabel,
@@ -80,10 +79,12 @@ import {
   readLoggedIn,
   readSelectedBookmarks,
   readSelectedLabel,
-  readTotalPage,
+  readTotalPage
+} from '../store';
+import {
   SelectLabelActionPayload,
   SetCurrentPageActionPayload
-} from '../store';
+} from '../store/actions';
 
 export default Vue.extend({
   name: 'Bookmarks',
@@ -141,11 +142,11 @@ export default Vue.extend({
     },
 
     async selectLabel(label: string) {
-      await dispatchSelectLabel(this.$store, <SelectLabelActionPayload>{ label });
+      await dispatchSelectLabel(this.$store, { label } as SelectLabelActionPayload);
     },
 
     async selectCurrentPage(page: number) {
-      await dispatchSetCurrentPage(this.$store, <SetCurrentPageActionPayload>{ page });
+      await dispatchSetCurrentPage(this.$store, { page } as SetCurrentPageActionPayload);
     },
 
     openUrl(url: string, active: boolean) {
