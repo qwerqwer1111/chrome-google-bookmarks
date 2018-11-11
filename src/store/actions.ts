@@ -38,14 +38,14 @@ export default {
   },
 
   selectLabel(context: ActionContext<State, State>, { label }: SelectLabelActionPayload) {
-    context.commit(types.SET_SELECTED_LABEL, <SetSelectedLabelPayload>{ selectedLabel: label });
-    context.commit(types.SET_CURRENT_PAGE, <SetCurrentPagePayload>{ currentPage: 0 });
+    context.commit(types.SET_SELECTED_LABEL, { selectedLabel: label } as SetSelectedLabelPayload);
+    context.commit(types.SET_CURRENT_PAGE, { currentPage: 0 } as SetCurrentPagePayload);
     localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_LABEL, label);
     localStorage.setItem(constants.LOCAL_STORAGE_CURRENT_PAGE, '0');
   },
 
   setCurrentPage(context: ActionContext<State, State>, { page }: SetCurrentPageActionPayload) {
-    context.commit(types.SET_CURRENT_PAGE, <SetCurrentPagePayload>{ currentPage: page });
+    context.commit(types.SET_CURRENT_PAGE, { currentPage: page } as SetCurrentPagePayload);
     localStorage.setItem(constants.LOCAL_STORAGE_CURRENT_PAGE, '' + page);
   }
 };
