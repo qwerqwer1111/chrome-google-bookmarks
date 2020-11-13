@@ -35,7 +35,7 @@ const state: State = {
   bookmarks: loadBookmarksFromLocalStorage(),
   selectedLabel: loadSelectedLabelFromLocalStorage(),
   loggedIn: true,
-  currentPage: loadCurrentPageFromLocalStorage()
+  currentPage: loadCurrentPageFromLocalStorage(),
 };
 
 const { dispatch, read } = getStoreAccessors<State, State>('');
@@ -55,5 +55,5 @@ export default new Vuex.Store({
   state,
   mutations,
   actions,
-  getters
+  getters,
 });

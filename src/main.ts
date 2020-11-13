@@ -7,5 +7,5 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: h => <VNode>h(App)
+  render: (h) => <VNode>h(App),
 });

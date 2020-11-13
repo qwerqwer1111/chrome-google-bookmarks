@@ -28,11 +28,17 @@ export default {
     state.loggedIn = loggedIn;
   },
 
-  [types.SET_SELECTED_LABEL](state: State, { selectedLabel }: SetSelectedLabelPayload) {
+  [types.SET_SELECTED_LABEL](
+    state: State,
+    { selectedLabel }: SetSelectedLabelPayload
+  ) {
     state.selectedLabel = selectedLabel;
   },
 
-  [types.SET_CURRENT_PAGE](state: State, { currentPage }: SetCurrentPagePayload) {
+  [types.SET_CURRENT_PAGE](
+    state: State,
+    { currentPage }: SetCurrentPagePayload
+  ) {
     state.currentPage = currentPage;
-  }
+  },
 } as MutationTree<State>;

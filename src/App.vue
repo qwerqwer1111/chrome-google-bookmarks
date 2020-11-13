@@ -8,16 +8,16 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'App'
+  name: 'App',
 });
 </script>
 
 <style>
-  @import "~spectre.css/dist/spectre.min.css";
-  @import "~spectre.css/dist/spectre-icons.min.css";
+@import '~spectre.css/dist/spectre.min.css';
+@import '~spectre.css/dist/spectre-icons.min.css';
 
-  .container.grid-xxs {
-    font-size: 14px;
-    padding-top: .4rem;
-  }
+.container.grid-xxs {
+  font-size: 14px;
+  padding-top: 0.4rem;
+}
 </style>
