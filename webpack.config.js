@@ -1,29 +1,35 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 const production = process.env.NODE_ENV === 'production';
 
 module.exports = {
   entry: './src/main.ts',
   output: {
-    path: `${__dirname}/dist`,
     filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
-    new CopyWebpackPlugin({
+    new CopyPlugin({
       patterns: [
         { from: 'manifest.json', to: `${__dirname}/dist/manifest.json` },
       ],
     }),
     new HtmlWebpackPlugin({
-      template: 'src/template/popup.html',
+      template: 'src/popup.html',
       filename: 'popup.html',
       minify: production
         ? { collapseWhitespace: true, minifyCSS: true }
         : false,
     }),
     new VueLoaderPlugin(),
+    new webpack.DefinePlugin({
+      __VUE_OPTIONS_API__: 'true',
+      __VUE_PROD_DEVTOOLS__: 'false',
+    }),
   ],
   devtool: false,
   module: {
@@ -39,19 +45,16 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.vue$/,
-        use: 'vue-loader',
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        test: /\.vue$/,
+        loader: 'vue-loader',
       },
     ],
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx'],
-    alias: {
-      vue$: 'vue/dist/vue.esm.js',
-    },
+    extensions: ['.tsx', '.ts', '.js'],
   },
 };

@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
-    "strict": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "target": "es5",
-    "module": "es2015",
+    "baseUrl": ".",
+    "outDir": "dist",
+    "sourceMap": false,
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "node",
-    "lib": ["dom", "es7"]
+    "allowJs": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"]
   },
   "exclude": ["node_modules"]
 }
